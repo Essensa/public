@@ -21,7 +21,7 @@ variable "key_path" {
 }
 
 resource "aws_vpc" "deploy" {
-  cidr_block = "10.10.0.0/16"
+  cidr_block = "10.100.0.0/16"
 }
 
 resource "aws_subnet" "subnet" {

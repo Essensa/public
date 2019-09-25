@@ -1,0 +1,5 @@
+---
+- hosts: firewalld
+  sudo: yes
+  roles:
+    - firewalld

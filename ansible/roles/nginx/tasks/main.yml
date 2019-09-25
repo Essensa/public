@@ -1,0 +1,11 @@
+---
+    - name: Add Nginx Repository
+      copy: src=/etc/yum.repos.d/ dest=/etc/yum.repos.d/ owner=root group=root
+      register: repos
+
+    - name: Install Nginx
+      yum: pkg=nginx state=latest
+      when: repos|success
+      register: nginxinstalled
+      notify:
+          - nginx start

@@ -1,0 +1,11 @@
+---
+    - name: Add docker Repository
+      copy: src=/etc/yum.repos.d/ dest=/etc/yum.repos.d/ owner=root group=root
+      register: repos
+
+    - name: Install docker
+      yum: pkg=docker state=latest
+      when: repos|success
+      register: dockerinstalled
+      notify:
+          - docker start

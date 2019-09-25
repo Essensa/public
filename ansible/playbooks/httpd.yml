@@ -1,0 +1,31 @@
+---
+- hosts: local
+  sudo: yes
+  roles:
+    - httpd
+
+  tasks:
+
+    - name: Services
+      command: "{{item}}"
+      with_items:
+      - whoami
+#      - service httpd status
+      register: commands
+    - debug: 
+        msg: "User admin is logged on remote host"
+#          Date 'started' is not validate
+      when: "'root' is defined"
+#        started is not validate
+
+#    - name: Print message
+#      debug: msg="User root is not logged on remote host"
+#      when: "not 'admin' in commands.stdout"
+
+#    - name: Services2
+#      command: date
+#      register: commands
+
+#    - name: Print message
+#      debug: msg="Date error"
+#      when: "not '2018' in commands.stdout"

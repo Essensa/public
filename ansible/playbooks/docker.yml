@@ -1,0 +1,19 @@
+---
+- hosts: docker
+  sudo: yes
+  roles:
+    - docker
+  
+  tasks:
+
+    - name: Services
+      command: service docker status
+#      with_items:
+#        - date
+#        - uname -r
+      register: commands
+
+    - debug: 
+#        msg: "{{commands}}"
+        msg: "Error in command"
+      when: "'stopped' in commands.stdout"

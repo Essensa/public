@@ -1,0 +1,29 @@
+---
+#- hosts: all
+#  sudo: yes
+#  roles:
+#    - docker
+#    - firewall
+#    - httpd
+#    - nginx
+
+
+- hosts: docker
+  sudo: yes
+  roles:
+    - docker
+
+- hosts: firewalld
+  sudo: yes
+  roles:
+    - firewalld
+
+- hosts: local
+  sudo: yes
+  roles:
+    - httpd
+
+- hosts: nginx
+  sudo: yes
+  roles:
+    - nginx

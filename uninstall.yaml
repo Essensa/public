@@ -55,7 +55,7 @@
         dest=/etc/sysconfig/docker
         regexp='(ADD_REGISTRY|BLOCK_REGISTRY|INSECURE_REGISTRY)=.*'
 
-     - name: Delete Docker
-       yum:
-         name: docker
-         state: absent
+    - name: Delete Docker
+      yum:
+        name: docker
+        state: absent

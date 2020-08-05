@@ -1,0 +1,61 @@
+---
+- name: Stop and disable Docker
+  hosts: OSEv3
+  become: true
+  tasks:
+    - name: Stop and disable Docker service
+      service: name=docker enabled=no state=stopped
+
+- name: Finalize OpenShift uninstallation
+  hosts: all
+  become: true
+  tasks:
+    - name: Delete leftover network interfaces
+      command: nmcli device delete {{ item }}
+      with_items:
+        - br0
+        - ovs-system
+        - tun0
+        - vxlan_sys_4789
+      register: device
+      changed_when: device.rc == 0
+      failed_when: false
+
+    - name: Remove leftover local data
+      shell:
+        find \
+        /etc/ansible/facts.d/* \
+        /etc/etcd \
+        /var/lib/etcd \
+        /etc/origin \
+        /var/lib/origin \
+        /etc/sysconfig/atomic-* \
+        /etc/pki/ca-trust/source/anchors/openshift* \
+        /etc/openvswitch /var/log/openvswitch \
+        /etc/systemd/system/docker.service.wants/atomic* \
+        /etc/systemd/system/docker.service.wants/etcd* \
+        /etc/systemd/system/docker.service.wants/openvswitch* \
+        /var/lib/cni/networks/openshift-sdn \
+        /tmp/ansible* /tmp/openshift* /tmp/tmp* \
+        -maxdepth 1 -print 2> /dev/null | xargs rm -rf
+      args:
+        warn: false
+      failed_when: false
+      changed_when: false
+
+    - name: Reset Docker proxy configuration
+      lineinfile:
+        state=absent
+        dest=/etc/sysconfig/docker
+        regexp='(NO_PROXY|HTTP_PROXY|HTTPS_PROXY)=.*'
+
+    - name: Reset Docker registry configuration
+      lineinfile:
+        state=absent
+        dest=/etc/sysconfig/docker
+        regexp='(ADD_REGISTRY|BLOCK_REGISTRY|INSECURE_REGISTRY)=.*'
+
+     - name: Delete Docker
+       yum:
+         name: docker
+         state: absent
